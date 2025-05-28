@@ -14,6 +14,7 @@ async def create_task(
     body: TasksCreateSchema,
     task_service: Annotated[TaskService, Depends(get_task_servise)],
 ):
+
     return await task_service.create_task(body=body)
 
 
@@ -21,6 +22,7 @@ async def create_task(
 async def get_task(
     task_service: TaskService = Depends(get_task_servise),
 ):
+
     return await task_service.get_tasks()
     
 
