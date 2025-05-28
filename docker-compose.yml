@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:16.2
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5433:5432"
+
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_psql:/data/db
+    networks:
+      - net
+
+  cache:
+    image: redis:7.2.4-alpine
+    restart: always
+    ports:
+      - "6377:6379"
+    networks:
+      - net
+
+  server:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - server_vol:/app/
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    networks:
+      - net
+    container_name: server
+    depends_on:
+      - db
+      - cache
+
+  client:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    env_file:
+      - ./frontend/.env
+    networks:
+      - net
+    container_name: client
+
+volumes:
+  db_psql:
+  server_vol:
+  client:
+
+networks:
+  net:
+    driver: bridge
