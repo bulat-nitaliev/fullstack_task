@@ -1,4 +1,4 @@
-# Fulstack project Fastapi postgresql redis Vue.js tailwindcss
+# Fulstack project Fastapi postgresql redis Vue.js tailwindcss nginx
 
 ## Table of Contents
 
