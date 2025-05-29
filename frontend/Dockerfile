@@ -1,14 +1,23 @@
-FROM node:lts-alpine
 
+FROM node:lts-alpine AS build-stage
+ENV NODE_OPTIONS=--openssl-legacy-provider
 WORKDIR /app
-
 COPY package*.json ./
-
 RUN npm install
+COPY ./ .
+RUN yarn build
 
-COPY . .
+FROM nginx:stable-alpine
 
-EXPOSE 8080
+# Копируем собранные файлы Vue.js
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Command to start the Vite dev server, listening on all interfaces
-CMD ["npm", "run", "serve", "--", "--host", "0.0.0.0"]
+# Копируем конфигурацию Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Открываем порты 80
+EXPOSE 80 
+
+# Запуск Nginx
+CMD ["nginx", "-g", "daemon off;"]
+

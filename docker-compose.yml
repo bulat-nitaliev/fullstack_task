@@ -24,8 +24,6 @@ services:
   server:
     build:
       context: ./backend
-    ports:
-      - "8000:8000"
     restart: unless-stopped
     env_file:
       - ./backend/.env
@@ -35,19 +33,19 @@ services:
     depends_on:
       - db
       - cache
-    # command: alembic upgrade head
 
   client:
     build:
       context: ./frontend
     ports:
-      - "8080:8080"
+      - "80:80"
     restart: unless-stopped
     env_file:
       - ./frontend/.env
     networks:
       - net
     container_name: client
+
 
 volumes:
   postgres_data:
